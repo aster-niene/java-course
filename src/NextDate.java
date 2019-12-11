@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class NextDate {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         System.out.println("Введите год");
         int year = scanner.nextInt();
         System.out.println("Введите месяц");
@@ -11,8 +12,6 @@ public class NextDate {
         int day = scanner.nextInt();
         int maxDay = 0;
         int nextYear;
-        int nextMonth;
-        int nextDay;
 
         switch (month) {
             case 1:
@@ -31,15 +30,18 @@ public class NextDate {
                 maxDay = 30;
                 break;
             case 2:
-                if ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)) {
+                if ((year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0))) {
                     maxDay = 29;
                 } else {
                     maxDay = 28;
                 }
                 break;
-
         }
-        if ((maxDay != 0) && (day <= maxDay)) {
+        int nextMonth;
+        int nextDay;
+        if ((maxDay == 0) || (day > maxDay)) {
+            System.out.println("Такой даты не существует");
+        } else {
             if (day == maxDay) {
                 nextDay = 1;
                 if (month == 12) {
@@ -54,11 +56,8 @@ public class NextDate {
                 nextMonth = month;
                 nextYear = year;
             }
-            String[] monthName = {"января", "Февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
-            System.out.println("Слудующая дата: " + nextDay + " " + monthName[nextMonth - 1] + " " + nextYear);
-        }
-        else {
-            System.out.println("Такой даты не существует");
+            String[] monthNames = {"января", "Февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
+            System.out.println("Слудующая дата: " + nextDay + " " + monthNames[nextMonth - 1] + " " + nextYear);
         }
     }
 }

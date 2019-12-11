@@ -4,41 +4,27 @@ public class NumbersFigures {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите число первый раз ");
-        int firstNumbers = scanner.nextInt();
+        System.out.println("Введите число ");
+        int digit = scanner.nextInt();
         int sum = 0;
-
-        for (int i = 0; firstNumbers > 0; i++) {
-            int numeral = firstNumbers % 10;
-            firstNumbers = firstNumbers / 10;
-            sum += numeral;
-        }
-        System.out.println("Сумма цифр числа равна " + sum);
-
-        // находим сумму четных чисел
-        System.out.println("Введите число второй раз ");
-        int secondNumbers = scanner.nextInt();
-        sum = 0;
-
-        for (int i = 0; secondNumbers > 0; i++) {
-            int numeral = secondNumbers % 10;
-            secondNumbers = secondNumbers / 10;
-            if (numeral % 2 == 0) {
-                sum += numeral;
-            }
-        }
-        System.out.println("Сумма четных цифр числа равна " + sum);
-
-        // находим максимальное число
-        System.out.println("Введите число в третий раз ");
-        int thirdNumbers = scanner.nextInt();
+        int evenSum = 0;
+        int notEvenSum = 0;
         int max = 0;
 
-        for (int i = 0; thirdNumbers > 0; i++) {
-            int numeral = thirdNumbers % 10;
-            thirdNumbers = thirdNumbers / 10;
+        while (digit > 0) {
+            int numeral = digit % 10;
+            digit = digit / 10;
+            sum += numeral;
+            if (numeral % 2 == 0) {
+                evenSum += numeral;
+            } else {
+                notEvenSum += numeral;
+            }
             max = (max < numeral) ? numeral : max;
         }
+        System.out.println("Сумма цифр числа равна " + sum);
+        System.out.println("Сумма четных цифр числа равна " + evenSum);
+        System.out.println("Сумма не четных цифр числа равна " + notEvenSum);
         System.out.println("Максимальное цифра в этом числе " + max);
     }
 }

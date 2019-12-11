@@ -3,6 +3,7 @@ import java.util.Scanner; // сразу от x до y по n в строке
 public class TenNumbersLine {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         System.out.print("Введите начало диапазона ");
         int beginRange = scanner.nextInt();
         System.out.print("Введите конец диапазона ");
@@ -12,7 +13,7 @@ public class TenNumbersLine {
         int i = beginRange;
 
         while (i <= endRange) {
-            if (i % multiplicity == 0) {
+            if ((i - beginRange + 1) % multiplicity == 0) {
                 System.out.printf("%10s%n", i);
             } else {
                 System.out.printf("%10s", i);

@@ -7,44 +7,49 @@ public class FirstLaba {
 
     static Random r = new Random();
     Scanner scanner = new Scanner(System.in);
-    static float givenProbabilityFirst = 0.3f;
-    static float givenProbabilitySecond = 0.5f;
-    static float givenProbabilityThird = 0.7f;
-    static int plannedNumberActions = 0;
-    static int calculatedNumberActions = 0;
+    static double[] givenProbability = {0, 0.3, 0.6, 0.9};
     static final double timeActions = 6.3;
-    static double totalTime = 0;
+    static final int numberRepetitions = 50;
 
     public static void main(String[] args) {
-        getTimeActionsProbability(5);
-        getTimeActionsProbability(9);
-        getTimeActionsProbability(16);
+        getAverageTimeActionsProbability(1);
+        getAverageTimeActionsProbability(5);
+        getAverageTimeActionsProbability(9);
+        getAverageTimeActionsProbability(16);
     }
 
-    public static void getTimeActionsProbability(int plannedNumberActions) {
-        System.out.println("время прохождения для вероятности 0,3 составляет: " + getTimeActions(givenProbabilityFirst, plannedNumberActions) + " секунд");
-        System.out.println("время прохождения для вероятности 0,5 составляет: " + getTimeActions(givenProbabilitySecond, plannedNumberActions) + " секунд");
-        System.out.println("время прохождения для вероятности 0.7 составляет: " + getTimeActions(givenProbabilityThird, plannedNumberActions) + " секунд");
-    }
+    public static void getAverageTimeActionsProbability(int plannedNumberActions) {
+        double averageRouteTime = 0;
 
-    public static double getTimeActions(float probability, int plannedNumberActions) {
-        int i = 0;
-        while (i < plannedNumberActions) {
-            if (eventOccurrence(probability)) {
-                calculatedNumberActions++;
-                i++;
-            } else {
-                calculatedNumberActions++;
+        for (int probabilityIndex = 0; probabilityIndex < 4; probabilityIndex++) {
+            double totalTimeRoutes = 0;
+            for (int j = 0; j < numberRepetitions; j++) {
+                totalTimeRoutes = totalTimeRoutes + getTimeActions(givenProbability[probabilityIndex], plannedNumberActions);
             }
+            averageRouteTime = totalTimeRoutes / numberRepetitions;
+            System.out.println("среднее время маршрута длинною " + plannedNumberActions + " шагов, с вероятностью ошибки " + givenProbability[probabilityIndex] + " составляет " + averageRouteTime + " секунд");
         }
-        System.out.println("количество попыток для  " + plannedNumberActions + " шагов и вероятности " + probability + ", составляет " + calculatedNumberActions);
-        totalTime = calculatedNumberActions * timeActions;
+    }
+
+    public static double getTimeActions(double probability, int neededActions) {
+        int successActions = 0;
+        int totalActions = 0;
+
+        while (successActions < neededActions) {
+            if (eventOccurrence(probability)) {
+                successActions++;
+            }
+            totalActions++;
+        }
+
+        double totalTime = totalActions * timeActions;
+        //System.out.println("totalTime = " + totalTime);
         return totalTime;
     }
 
-    public static boolean eventOccurrence(float probability) {
+    public static boolean eventOccurrence(double probability) {
         boolean yesNo = false;
-        double randomNumber = r.nextDouble();
+
         if (r.nextDouble() > probability) {
             yesNo = true;
         }
