@@ -13,6 +13,8 @@ public class SecondLaba {
     private static int indexN = 0;
     private static int indexE = 0;
     private static int counterNormalEvent = 0;
+    private static double probability = 0.3;
+    static final double timeActions = 6.3;
 
 
     public static void main(String[] args) {
@@ -60,13 +62,13 @@ public class SecondLaba {
         int timeWay = 0;
         switch (failuresWayOption) {
             case 1:
-                timeWay = 10;
+                timeWay = getTimeActions(probability, 2);
                 return timeWay;
             case 2:
-                timeWay = 20;
+                timeWay = getTimeActions(probability, 3);
                 return timeWay;
             case 3:
-                timeWay = 30;
+                timeWay = getTimeActions(probability, 4);
                 return timeWay;
         }
         return timeWay;
@@ -77,13 +79,13 @@ public class SecondLaba {
         int timeWay = 0;
         switch (normalWayOption) {                                                                                      //вычисляем временную длинну, в зависимости от варианта
             case 1:
-                timeWay = 10;
+                timeWay = getTimeActions(probability, 5);
                 return timeWay;
             case 2:
-                timeWay = 20;
+                timeWay = getTimeActions(probability, 9);
                 return timeWay;
             case 3:
-                timeWay = 30;
+                timeWay = getTimeActions(probability, 15);
                 return timeWay;
         }
         return timeWay;
@@ -116,6 +118,31 @@ public class SecondLaba {
             normalEventsTime.add(currentTime);
         }
         return normalEventsTime.toArray(new Integer[normalEventsTime.size()]);
+    }
+
+    public static int getTimeActions(double probability, int neededActions) {
+        int successActions = 0;
+        int totalActions = 0;
+
+        while (successActions < neededActions) {
+            if (eventOccurrence(probability)) {
+                successActions++;
+            }
+            totalActions++;
+        }
+
+        double totalTime = totalActions * timeActions;
+        //System.out.println("totalTime = " + totalTime);
+        return (int) totalTime;
+    }
+
+    public static boolean eventOccurrence(double probability) {
+        boolean yesNo = false;
+
+        if (Math.random() > probability) {
+            yesNo = true;
+        }
+        return yesNo;
     }
 
 
