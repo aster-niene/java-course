@@ -1,6 +1,5 @@
 package Xenia;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,65 +7,66 @@ public class SecondLaba {
 
     private static final Randomizer randomizer = new Randomizer(60.0);
     private static int simulationTime = 1000; // время симуляции
-    private static int quantityFailures = 20; // количество сбоев
+    private static int quantityFailures = 25; // количество сбоев
     private static int currentTime = 0;
     private static int indexN = 0;
     private static int indexE = 0;
-    private static int counterNormalEvent = 0;                                                                          // количество удачных проходов
-    private static int totalRecoveryTime = 0;                                                                           // общее время восстановления
+    private static int counterNormalEvent = 0;
+    private static int totalRecoveryTime = 0;
+    private static int totalProductiveTime = 0;
     private static int recoveryTime = 0;
-    private static double probability = 0.6;
+    private static int downtime = 0;
+    private static double probability = 0.9;
     static final double timeActions = 6.3;
     private static Integer[] masNormalEventsTime = getNormalEventsTime();
 
-
     public static void main(String[] args) {
-
-
-        int segments = simulationTime / 5;                                                                              //делим время симулыции на 5 равных отезков
-        int timeBetweenFailures = (segments * 2) / quantityFailures;                                                    // время между ошибками
-        int[] failureTime = new int[quantityFailures];                                                                  // создаем массив, длинной в количество ошибок
-        failureTime[0] = segments * 3;                                                                                  // первый элемент массива равен времен первой ошибки
-        for (int i = 1; i < quantityFailures; i++) {                                                                    // заполняем остальные элементы массива
+        int segments = simulationTime / 5;
+        int timeBetweenFailures = (segments * 2) / quantityFailures;
+        int[] failureTime = new int[quantityFailures];
+        failureTime[0] = segments * 3;
+        for (int i = 1; i < quantityFailures; i++) {
             failureTime[i] = failureTime[i - 1] + timeBetweenFailures;
         }
 
-
-
-
-
         currentTime = masNormalEventsTime[0];
-        while (currentTime < simulationTime) {                                                                          // пока текущее время меньше времени симуляции
-            if (masNormalEventsTime[indexN] < failureTime[indexE]) {                                                    // если ближайшее событие - положительное событие
-                if (currentTime <= masNormalEventsTime[indexN]) {                                                       // если текущее время - меньше времени наступления ближайшего положительного события
-                    currentTime = masNormalEventsTime[indexN];                                                          // значит перемещаем текущее время в момент наступления ближайшего положительного события
+        while (currentTime < simulationTime) {
+            if (masNormalEventsTime[indexN] < failureTime[indexE]) {
+                if (currentTime <= masNormalEventsTime[indexN]) {
+                    downtime = masNormalEventsTime[indexN] - currentTime;
+                    currentTime = masNormalEventsTime[indexN];
                 }
-                currentTime = currentTime + getTimeNormalWay();                                                         // к текущему времени прибавляем время на прохождение положительного маршрута
-                indexN++;                                                                                               // увеличиваем индекс положительных событий
-                counterNormalEvent++;                                                                                   // увеличиваем счетчик прохождения положительного маршрута
-                if (currentTime > failureTime[indexE]) {                                                                 // если текущее время больше чем ближайшее отрицательное событие
+                int timeNormalWay = getTimeNormalWay();
+                currentTime = currentTime + timeNormalWay;
+                indexN++;
+                counterNormalEvent++;
+                if (currentTime > failureTime[indexE]) {
                     recoveryTime = getTimeFailuresWay();
                     totalRecoveryTime = totalRecoveryTime + recoveryTime;
-                    currentTime = failureTime[indexE] +recoveryTime;                                                    // значит произошел сбой и текущее время теперь равно времени наступления сбоя плюс время на обработку сбоя
-                    masNormalEventsTime = getNormalEventsTime(currentTime);                                             // генерим заново положительные события
-                    indexN = 0;                                                                                         // обнуляем индекс положительных событий
-                    indexE++;                                                                                           // увеличиваем индекс отрицательных событий
+                    currentTime = failureTime[indexE] + recoveryTime;
+                    masNormalEventsTime = getNormalEventsTime(currentTime);
+                    indexN = 0;
+                    indexE++;
+                } else {
+                    totalProductiveTime = totalProductiveTime + timeNormalWay;
                 }
             } else {
                 recoveryTime = getTimeFailuresWay();
                 totalRecoveryTime = totalRecoveryTime + recoveryTime;
-                currentTime = failureTime[indexE] + recoveryTime;                                                       // значит произошел сбой и текущее время теперь равно времени наступления сбоя плюс время на обработку сбоя
-                masNormalEventsTime = getNormalEventsTime(currentTime);                                                 // генерим заново положительные события
-                indexN = 0;                                                                                             // обнуляем индекс положительных событий
-                indexE++;                                                                                               // увеличиваем индекс отрицательных событий
+                currentTime = failureTime[indexE] + recoveryTime;
+                masNormalEventsTime = getNormalEventsTime(currentTime);
+                indexN = 0;
+                indexE++;
             }
         }
         System.out.println("количество завершенных проходов равно " + counterNormalEvent);
         System.out.println("общее время востановления " + totalRecoveryTime);
+        System.out.println("общее время продуктивной работы равно " + totalProductiveTime);
+        System.out.println("время простоя равно " + downtime);
     }
 
-    private static int getTimeFailuresWay() {                                                                           // время на прохождение пути после отказа
-        int failuresWayOption = (int) (Math.random() * 4);                                                              // вызываем рендомайзер и выбираем по какому варианту пути мы идем
+    private static int getTimeFailuresWay() {
+        int failuresWayOption = (int) (Math.random() * 4);
         int timeWay = 0;
         switch (failuresWayOption) {
             case 1:
@@ -82,10 +82,10 @@ public class SecondLaba {
         return timeWay;
     }
 
-    private static int getTimeNormalWay() {                                                                             // время на прохождение нормального пути
-        int normalWayOption = (int) (Math.random() * 4);                                                                // вызываем рендомайзер и выбираем по какому варианту пути мы идем, и обозначаем его переменной normalWayOption пока равной 1
+    private static int getTimeNormalWay() {
+        int normalWayOption = (int) (Math.random() * 4);
         int timeWay = 0;
-        switch (normalWayOption) {                                                                                      //вычисляем временную длинну, в зависимости от варианта
+        switch (normalWayOption) {
             case 1:
                 timeWay = getTimeActions(probability, 5);
                 return timeWay;
@@ -99,30 +99,11 @@ public class SecondLaba {
         return timeWay;
     }
 
-
-
-
-
-/*
-    private static int[] getFailureTime(int simulationTime, int quantityFailures) {                                     // заполнение массива временем ошибок
-        int segments = simulationTime / 5;                                                                              //делим время симулыции на 5 равных отезков
-        int timeBetweenFailures = (segments * 2) / quantityFailures;                                                    // время между ошибками
-        int[] failureTime = new int[quantityFailures];                                                                  // создаем массив, длинной в количество ошибок
-        failureTime[0] = segments * 3;                                                                                  // первый элемент массива равен времен первой ошибки
-        for (int i = 1; i < quantityFailures; i++) {                                                                    // заполняем остальные элементы массива
-            failureTime[i] = failureTime[i - 1] + timeBetweenFailures;
-        }
-        return failureTime;                                                                                             // возвращаем массив содержащий время наступления ошибки
-    }
-
-*/
-
-    private static Integer[] getNormalEventsTime() {                                                                    // заполнение массива временем нормальных событий
+    private static Integer[] getNormalEventsTime() {
         return getNormalEventsTime(0);
     }
 
-
-    private static Integer[] getNormalEventsTime(int startingTime) {                                                                    // заполнение массива временем нормальных событий
+    private static Integer[] getNormalEventsTime(int startingTime) {
         List<Integer> normalEventsTime = new ArrayList<>();
         int currentTime = startingTime;
         while (currentTime < simulationTime) {
@@ -132,7 +113,7 @@ public class SecondLaba {
         return normalEventsTime.toArray(new Integer[normalEventsTime.size()]);
     }
 
-    public static int getTimeActions(double probability, int neededActions) {                                           // время на определеное количество шагов, для определенной вероятности ошибки
+    public static int getTimeActions(double probability, int neededActions) {
         int successActions = 0;
         int totalActions = 0;
 
@@ -150,12 +131,9 @@ public class SecondLaba {
 
     public static boolean eventOccurrence(double probability) {
         boolean yesNo = false;
-
         if (Math.random() > probability) {
             yesNo = true;
         }
         return yesNo;
     }
-
-
 }
