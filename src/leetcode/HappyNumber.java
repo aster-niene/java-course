@@ -40,7 +40,14 @@ public class HappyNumber {
     private static int calculateNewNamber(int number) {
         int newNumber = 0;
         String s = Integer.toString(number);
+
+        //int[] nums = new int[] { 1, 2, 3, 5 };
+        //int[] nums2 = { 1, 2, 3, 5 };
+        //int nums[];
+        //int[] nums = new int[] { 1, 2, 3, 5 };
+        //int[] nums2 = { 1, 2, 3, 5 };
         int[] arr = new int[s.length()];
+
         for (int i = s.length() - 1; i >= 0; i--) {
             arr[i] = number % 10;
             number /= 10;
